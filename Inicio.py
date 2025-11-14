@@ -24,7 +24,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Title and description
-st.title('📊 Análisis de datos de Sensores en Mi Ciudad')
+st.title('📊 Sensores de nivel en Univesidad EAFIT')
 st.markdown("""
     Esta aplicación permite analizar datos de sensores
     recolectados en diferentes puntos de la ciudad.
