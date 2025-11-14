@@ -29,7 +29,7 @@ st.markdown("""
     Esta aplicación permite analizar datos de sensores
     recolectados en diferentes puntos de la ciudad.
 """)
-
+st.image("Captura de pantalla 2025-11-13 195050.png", caption="ESTADISTICAS")
 # Create map data for EAFIT
 eafit_location = pd.DataFrame({
     'lat': [6.2006],
