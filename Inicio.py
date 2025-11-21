@@ -6,7 +6,7 @@ from datetime import datetime
 
 # Page configuration
 st.set_page_config(
-    page_title="Sensores de nivel",
+    page_title="Sensor de nivel",
     page_icon="📊",
     layout="wide"
 )
