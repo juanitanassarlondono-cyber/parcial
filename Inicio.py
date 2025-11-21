@@ -6,14 +6,27 @@ from datetime import datetime
 
 # Page configuration
 st.set_page_config(
-    page_title="Análisis de Sensores - Mi Ciudad",
-    page_icon="📊",
+    page_title="Panel de Análisis de Sensores Urbanos",
+    page_icon="📡",
     layout="wide"
 )
 
 # Custom CSS
 st.markdown("""
     <style>
+    .main-title {
+        font-size: 38px !important;
+        font-weight: 700 !important;
+        color: #1A5276;
+        text-align: center;
+        margin-bottom: 5px;
+    
+
+     h2, .stMarkdown h2, .stSubheader {
+        color: #154360 !important;
+        font-weight: 600 !important;
+    
+    
     .main {
         padding: 2rem;
     }
@@ -24,10 +37,12 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Title and description
-st.title('📊 Análisis de datos de Sensores en Mi Ciudad')
+st.markdown('<p class="main-title">📡 Panel de Análisis de Sensores Urbanos</p>', unsafe_allow_html=True)
+
 st.markdown("""
-    Esta aplicación permite analizar datos de sensores
-    recolectados en diferentes puntos de la ciudad.
+    Esta herramienta le permite visualizar, analizar y filtrar datos generados por sensores
+    instalados en diferentes puntos de la ciudad.  
+    Suba un archivo CSV para comenzar el análisis.
 """)
 
 # Create map data for EAFIT
