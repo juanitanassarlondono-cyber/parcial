@@ -4,81 +4,106 @@ from PIL import Image
 import numpy as np
 from datetime import datetime
 
-# Page configuration
+# ------------------------------------------
+# CONFIGURACIÓN DE ESTILO
+# ------------------------------------------
+
 st.set_page_config(
-    page_title="Análisis de Sensores - Mi Ciudad",
-    page_icon="📊",
+    page_title="Panel de Análisis de Sensores",
+    page_icon="📡",
     layout="wide"
 )
 
-# Custom CSS
+# Estilos visuales simples (NO afectan la lógica)
 st.markdown("""
     <style>
-    .main {
-        padding: 2rem;
-    }
-    .stAlert {
-        margin-top: 1rem;
-    }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .main {
+            padding-top: 1.5rem;
+        }
+        h1 {
+            color: #003566;
+            font-weight: 800;
+        }
+        h2, h3 {
+            color: #001D3D;
+        }
+        .stTabs [data-baseweb="tab-list"] button {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
     </style>
 """, unsafe_allow_html=True)
 
-# Title and description
-st.title('📊 Análisis de datos de Sensores en Mi Ciudad')
-st.markdown("""
-    Esta aplicación permite analizar datos de sensores
-    recolectados en diferentes puntos de la ciudad.
-""")
+# ------------------------------------------
+# TÍTULO PRINCIPAL
+# ------------------------------------------
 
-# Create map data for EAFIT
+st.title("📡 Panel de Análisis de Sensores Urbanos")
+st.markdown("### Observa, analiza y comprende el comportamiento de los sensores instalados en la ciudad.")
+
+st.write("---")
+
+# ------------------------------------------
+# SECCIÓN DE ARCHIVO
+# ------------------------------------------
+
+uploaded_file = st.file_uploader("📂 **Cargar archivo CSV de datos**", type=['csv'])
+
+# ------------------------------------------
+# MAPA — Lo movimos de arriba a la sección final (como pediste)
+# ------------------------------------------
+
 eafit_location = pd.DataFrame({
     'lat': [6.2006],
     'lon': [-75.5783],
-    'location': ['Universidad EAFIT']
 })
 
-# Display map
-st.subheader("📍 Ubicación de los Sensores - Universidad EAFIT")
-st.map(eafit_location, zoom=15)
 
-# File uploader
-uploaded_file = st.file_uploader('Seleccione archivo CSV', type=['csv'])
+# ------------------------------------------
+# LÓGICA PRINCIPAL
+# ------------------------------------------
 
 if uploaded_file is not None:
     try:
-        # Load and process data
         df1 = pd.read_csv(uploaded_file)
-        
-        # Renombrar la columna a 'variable'
-        # Asume que la primera columna después de 'Time' es la variable de interés
-        # O busca una columna específica y la renombra
+
+        # Ajuste del nombre de la variable SIN alterar tu lógica
         if 'Time' in df1.columns:
-            # Si existe Time, renombrar la otra columna a 'variable'
             other_columns = [col for col in df1.columns if col != 'Time']
             if len(other_columns) > 0:
                 df1 = df1.rename(columns={other_columns[0]: 'variable'})
         else:
-            # Si no existe Time, renombrar la primera columna a 'variable'
             df1 = df1.rename(columns={df1.columns[0]: 'variable'})
-        
-        # Procesar columna de tiempo si existe
+
         if 'Time' in df1.columns:
             df1['Time'] = pd.to_datetime(df1['Time'])
             df1 = df1.set_index('Time')
 
-        # Create tabs for different analyses
-        tab1, tab2, tab3, tab4 = st.tabs(["📈 Visualización", "📊 Estadísticas", "🔍 Filtros", "🗺️ Información del Sitio"])
+        # ------------------------------------------
+        # TABS — Mantengo las 4 secciones originales
+        # ------------------------------------------
 
+        tab1, tab2, tab3, tab4 = st.tabs([
+            "📈 Visualización",
+            "📊 Estadísticas",
+            "🎚 Filtros",
+            "🗺️ Ubicación del Sensor"
+        ])
+
+        # ------------------------------------------
+        # TAB 1 — VISUALIZACIÓN
+        # ------------------------------------------
         with tab1:
-            st.subheader('Visualización de Datos')
-            
-            # Chart type selector
+            st.subheader("📈 Visualización de la Variable Registrada")
+
             chart_type = st.selectbox(
-                "Seleccione tipo de gráfico",
+                "Selecciona el tipo de gráfico",
                 ["Línea", "Área", "Barra"]
             )
-            
-            # Create plot based on selection
+
             if chart_type == "Línea":
                 st.line_chart(df1["variable"])
             elif chart_type == "Área":
@@ -86,110 +111,89 @@ if uploaded_file is not None:
             else:
                 st.bar_chart(df1["variable"])
 
-            # Raw data display with toggle
-            if st.checkbox('Mostrar datos crudos'):
-                st.write(df1)
+            if st.checkbox("Mostrar tabla de datos"):
+                st.dataframe(df1)
 
+        # ------------------------------------------
+        # TAB 2 — ESTADÍSTICAS
+        # ------------------------------------------
         with tab2:
-            st.subheader('Análisis Estadístico')
-            
-            # Statistical summary
-            stats_df = df1["variable"].describe()
-            
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                st.dataframe(stats_df)
-            
-            with col2:
-                # Additional statistics
-                st.metric("Valor Promedio", f"{stats_df['mean']:.2f}")
-                st.metric("Valor Máximo", f"{stats_df['max']:.2f}")
-                st.metric("Valor Mínimo", f"{stats_df['min']:.2f}")
-                st.metric("Desviación Estándar", f"{stats_df['std']:.2f}")
+            st.subheader("📊 Resumen Estadístico de los Datos")
 
+            stats_df = df1["variable"].describe()
+
+            col1, col2 = st.columns(2)
+            col1.dataframe(stats_df)
+
+            col2.metric("Promedio", f"{stats_df['mean']:.2f}")
+            col2.metric("Máximo", f"{stats_df['max']:.2f}")
+            col2.metric("Mínimo", f"{stats_df['min']:.2f}")
+            col2.metric("Desviación Estándar", f"{stats_df['std']:.2f}")
+
+        # ------------------------------------------
+        # TAB 3 — FILTROS
+        # ------------------------------------------
         with tab3:
-            st.subheader('Filtros de Datos')
-            
-            # Calcular rango de valores
+            st.subheader("🎚 Filtros por Valor")
+
             min_value = float(df1["variable"].min())
             max_value = float(df1["variable"].max())
             mean_value = float(df1["variable"].mean())
-            
-            # Verificar si hay variación en los datos
+
             if min_value == max_value:
-                st.warning(f"⚠️ Todos los valores en el dataset son iguales: {min_value:.2f}")
-                st.info("No es posible aplicar filtros cuando no hay variación en los datos.")
+                st.warning(f"⚠ Los valores son todos iguales: {min_value:.2f}")
                 st.dataframe(df1)
             else:
                 col1, col2 = st.columns(2)
-                
+
                 with col1:
-                    # Minimum value filter
                     min_val = st.slider(
-                        'Valor mínimo',
-                        min_value,
-                        max_value,
-                        mean_value,
-                        key="min_val"
+                        "Selecciona un valor mínimo",
+                        min_value, max_value, mean_value
                     )
-                    
-                    filtrado_df_min = df1[df1["variable"] > min_val]
-                    st.write(f"Registros con valor superior a {min_val:.2f}:")
-                    st.dataframe(filtrado_df_min)
-                    
+                    filtrado_min = df1[df1["variable"] > min_val]
+                    st.dataframe(filtrado_min)
+
                 with col2:
-                    # Maximum value filter
                     max_val = st.slider(
-                        'Valor máximo',
-                        min_value,
-                        max_value,
-                        mean_value,
-                        key="max_val"
+                        "Selecciona un valor máximo",
+                        min_value, max_value, mean_value
                     )
-                    
-                    filtrado_df_max = df1[df1["variable"] < max_val]
-                    st.write(f"Registros con valor inferior a {max_val:.2f}:")
-                    st.dataframe(filtrado_df_max)
+                    filtrado_max = df1[df1["variable"] < max_val]
+                    st.dataframe(filtrado_max)
 
-                # Download filtered data
-                if st.button('Descargar datos filtrados'):
-                    csv = filtrado_df_min.to_csv().encode('utf-8')
+                if st.button("Descargar datos filtrados (> mínimo)"):
+                    csv = filtrado_min.to_csv().encode("utf-8")
                     st.download_button(
-                        label="Descargar CSV",
+                        label="Descargar CSV filtrado",
                         data=csv,
-                        file_name='datos_filtrados.csv',
-                        mime='text/csv',
+                        file_name="datos_filtrados.csv",
+                        mime="text/csv"
                     )
 
+        # ------------------------------------------
+        # TAB 4 — UBICACIÓN DEL SENSOR (Mapa movido aquí)
+        # ------------------------------------------
         with tab4:
-            st.subheader("Información del Sitio de Medición")
-            
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                st.write("### Ubicación del Sensor")
-                st.write("**Universidad EAFIT**")
-                st.write("- Latitud: 6.2006")
-                st.write("- Longitud: -75.5783")
-                st.write("- Altitud: ~1,495 metros sobre el nivel del mar")
-            
-            with col2:
-                st.write("### Detalles del Sensor")
-                st.write("- Tipo: ESP32")
-                st.write("- Variable medida: Según configuración del sensor")
-                st.write("- Frecuencia de medición: Según configuración")
-                st.write("- Ubicación: Campus universitario")
+            st.subheader("🗺️ Ubicación del Sensor en la Ciudad")
+            st.map(eafit_location, zoom=15)
+
+            st.write("### 📍 Info del sitio")
+            st.write("**Universidad EAFIT**")
+            st.write("- Latitud: 6.2006")
+            st.write("- Longitud: -75.5783")
+            st.write("- Altitud: ~1495 msnm")
+            st.write("- Sensor: ESP32 (variable configurable)")
 
     except Exception as e:
-        st.error(f'Error al procesar el archivo: {str(e)}')
-        st.info('Asegúrese de que el archivo CSV tenga al menos una columna con datos.')
+        st.error(f"Error al procesar el archivo: {str(e)}")
 else:
-    st.warning('Por favor, cargue un archivo CSV para comenzar el análisis.')
-    
-# Footer
-st.markdown("""
-    ---
-    Desarrollado para el análisis de datos de sensores urbanos.
-    Ubicación: Universidad EAFIT, Medellín, Colombia
-""")
+    st.info("📂 Carga un archivo CSV para comenzar.")
+
+
+# ------------------------------------------
+# FOOTER
+# ------------------------------------------
+st.write("---")
+st.caption("Desarrollado para análisis de datos urbanos • Universidad EAFIT")
+
