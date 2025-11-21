@@ -6,7 +6,7 @@ from datetime import datetime
 
 # Page configuration
 st.set_page_config(page_tittle="Mi Página" , layout="wide")
-    st.markdown("""
+st.markdown("""
     <h1 style="text-align:center; color:#1E88E5;">Bienvenido</h1>
     """, unsafe_allow_html=True)
 
