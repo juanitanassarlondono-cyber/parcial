@@ -33,10 +33,11 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Title and description
-st.title('📊 Sensor de nivel en Univesidad EAFIT')
+st.title('📡 Panel de Análisis de Sensores Urbanos')
 st.markdown("""
-    Esta aplicación permite analizar datos de sensores
-    recolectados en diferentes puntos de la ciudad.
+Esta herramienta le permite visualizar, analizar y filtrar datos generados por sensores
+    instalados en diferentes puntos de la ciudad.  
+    Suba un archivo CSV para comenzar el análisis.
 """)
 
 # Create map data for EAFIT
