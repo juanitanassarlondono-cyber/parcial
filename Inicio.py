@@ -11,15 +11,24 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom CSS
 st.markdown("""
     <style>
-    .main {
-        padding: 2rem;
-    }
-    .stAlert {
-        margin-top: 1rem;
-    }
+        html, body, [class*="css"] {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 16px;
+        }
+        /* Título principal (streamlit renderiza h1 para st.title) */
+        h1 {
+            font-size: 34px !important;
+            font-weight: 700 !important;
+            color: #1A5276 !important;
+            margin-bottom: 0.1rem;
+        }
+        /* Subtítulos comunes */
+        h2, h3 {
+            color: #154360 !important;
+            font-weight: 600 !important;
+        }
     </style>
 """, unsafe_allow_html=True)
 
