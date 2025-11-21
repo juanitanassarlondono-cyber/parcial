@@ -1,35 +1,4 @@
-[5:40 PM, 11/21/2025] Juanita Nassar: import pandas as pd
-import streamlit as st
-from PIL import Image
-import numpy as np
-from datetime import datetime
-
-# Configuración de la página
-st.set_page_config(
-    page_title="Panel de Análisis de Sensores Urbanos",
-    page_icon="📡",
-    layout="wide"
-)
-
-# Título principal
-st.title("📡 Panel de Análisis de Sensores Urbanos")
-st.markdown("Suba un archivo CSV para comenzar el análisis.")
-
-# Ubicación del mapa (Universidad EAFIT)
-eafit_location = pd.DataFrame({
-    'lat': [6.2006],
-    'lon': [-75.5783],
-    'location': ['Universidad EAFIT']
-})
-
-st.subheader("📍 Ubicación de los Sensores - Universidad EAFIT")
-st.map(eafit_location, zoom=15)
-
-# Carga del archivo
-uploaded_file = st.file_uploader('Seleccione un archivo CSV', type=['csv'])
-
-if uploaded_file i…
-[5:45 PM, 11/21/2025] Juanita Nassar: import pandas as pd
+import pandas as pd
 import streamlit as st
 from PIL import Image
 import numpy as np
