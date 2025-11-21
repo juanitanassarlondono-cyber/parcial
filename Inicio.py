@@ -6,6 +6,20 @@ from datetime import datetime
 
 # Page configuration
 st.set_page_config(
+    st.markdown("""
+<style>
+h1 {
+    font-size: 42px !important;
+    color: #1f4e79 !important;
+    font-weight: 900;
+}
+h2, h3 {
+    color: #123456 !important;
+    font-weight: 700;
+}
+</style>
+""", unsafe_allow_html=True)
+    
     page_title="Panel de Analálisis de Sensores Urbanos",
     page_icon="📡",
     layout="wide"
@@ -175,21 +189,18 @@ if uploaded_file is not None:
         with tab4:
             st.subheader("Información del Sitio de Medición")
             
-            col1, col2 = st.columns(2)
+            col1, col2 = st.columns([1, 1])
             
             with col1:
-                st.write("### Ubicación del Sensor")
+                st.write("**📍 Ubicación del Sensor**")
                 st.write("**Universidad EAFIT**")
-                st.write("- Latitud: 6.2006")
-                st.write("- Longitud: -75.5783")
+                st.write("- Latitud: {eafit_location['lat'][0]}")
+                st.write("- Longitud: {eafit_location['lon'][0]}")
                 st.write("- Altitud: ~1,495 metros sobre el nivel del mar")
+                st.write("- Tipo de Sensor: ESP32")
             
             with col2:
-                st.write("### Detalles del Sensor")
-                st.write("- Tipo: ESP32")
-                st.write("- Variable medida: Según configuración del sensor")
-                st.write("- Frecuencia de medición: Según configuración")
-                st.write("- Ubicación: Campus universitario")
+                st.map(eafit_location, zoom=15)
 
     except Exception as e:
         st.error(f'Error al procesar el archivo: {str(e)}')
